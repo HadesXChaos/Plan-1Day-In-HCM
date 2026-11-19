@@ -3,42 +3,42 @@
 
   const STORAGE_KEY = 'custom_day_timeline_v1';
 
-  // 7 Danh mục kèm màu sắc & icon SVG sắc nét
+  // 7 Danh mục — bộ icon cute dùng thư viện ngoài Material Symbols Rounded (bo tròn, fill đậm)
   const CATEGORIES = {
     'di-chuyen': {
       label: 'Di chuyển',
       color: '#0284c7',
-      svg: '<path d="M5 17h14M6 17l1.5-7h9L18 17M8 10V7a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>'
+      icon: 'directions_bus'
     },
     'an-uong': {
       label: 'Ăn uống',
       color: '#ea580c',
-      svg: '<path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M16 3v18m0-18c2.5 0 4 2.2 4 5.5S18.5 14 16 14"/>'
+      icon: 'ramen_dining'
     },
     'cong-viec': {
       label: 'Công việc / Học tập',
       color: '#4f46e5',
-      svg: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>'
+      icon: 'laptop_mac'
     },
     'tham-quan': {
       label: 'Tham quan / Giải trí',
       color: '#16a34a',
-      svg: '<path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/>'
+      icon: 'attractions'
     },
     'nghi-ngoi': {
       label: 'Nghỉ ngơi',
       color: '#0d9488',
-      svg: '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/>'
+      icon: 'bedtime'
     },
     'su-kien': {
       label: 'Sự kiện / Gặp gỡ',
       color: '#db2777',
-      svg: '<path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'
+      icon: 'celebration'
     },
     'khac': {
       label: 'Khác',
       color: '#64748b',
-      svg: '<circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/>'
+      icon: 'auto_awesome'
     }
   };
 
@@ -379,7 +379,7 @@
         <article class="timeline-item ${ev.highlight ? 'is-highlight' : ''} ${ev.done ? 'is-done' : ''} reveal" style="transition-delay: ${Math.min(i * 55, 330)}ms" data-id="${ev.id}">
           <div class="tl-rail">
             <div class="tl-dot" style="background: linear-gradient(135deg, ${cat.color}, ${cat.color}B3)" title="${escapeHTML(cat.label)}">
-              <svg viewBox="0 0 24 24">${cat.svg}</svg>
+              <span class="material-symbols-rounded tl-ico" aria-hidden="true">${cat.icon}</span>
               <span class="tl-num">${String(i + 1).padStart(2, '0')}</span>
               ${ev.done ? '<span class="tl-done">✓</span>' : ''}
             </div>
@@ -388,10 +388,10 @@
           <div class="tl-card">
             <div class="tl-top">
               <span class="tl-time">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span class="material-symbols-rounded tl-ico-sm" aria-hidden="true">schedule</span>
                 ${escapeHTML(ev.start)} <span class="tl-arrow">→</span> ${escapeHTML(ev.end)}
               </span>
-              <span class="duration-badge">⏱ ${duration}</span>
+              <span class="duration-badge"><span class="material-symbols-rounded tl-ico-sm" aria-hidden="true">timer</span> ${duration}</span>
             </div>
 
             <div class="tl-main">
@@ -403,13 +403,13 @@
               <div class="tl-content">
                 <h3 class="tl-title">${escapeHTML(ev.title)}</h3>
                 <div class="card-badges">
-                  <span class="cat-badge" style="background: ${cat.color}">${cat.label}</span>
-                  ${ev.highlight ? '<span class="highlight-badge">★ Nổi bật</span>' : ''}
+                  <span class="cat-badge" style="background: ${cat.color}"><span class="material-symbols-rounded badge-ico" aria-hidden="true">${cat.icon}</span>${cat.label}</span>
+                  ${ev.highlight ? '<span class="highlight-badge"><span class="material-symbols-rounded badge-ico" aria-hidden="true">kid_star</span>Nổi bật</span>' : ''}
                   ${ev.location ? `
                     <a class="location-tag location-link" href="${mapsUrl(ev.location)}" target="_blank" rel="noopener" title="Mở Google Maps: ${escapeHTML(ev.location)}">
-                      <svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg>
-                      <span>${escapeHTML(ev.location)}</span>
-                      <svg viewBox="0 0 24 24" class="external-icon"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                      <span class="material-symbols-rounded badge-ico" aria-hidden="true">location_on</span>
+                      <span class="location-text">${escapeHTML(ev.location)}</span>
+                      <span class="material-symbols-rounded external-icon" aria-hidden="true">open_in_new</span>
                     </a>
                   ` : ''}
                 </div>
@@ -418,19 +418,19 @@
 
               <div class="card-actions no-preview no-print">
                 <button class="icon-btn" type="button" data-action="move-up" title="Di chuyển lên" ${isFirst ? 'disabled style="opacity:.35;pointer-events:none"' : ''}>
-                  <svg viewBox="0 0 24 24" class="icon"><path d="m18 15-6-6-6 6"/></svg>
+                  <span class="material-symbols-rounded" aria-hidden="true">arrow_upward</span>
                 </button>
                 <button class="icon-btn" type="button" data-action="move-down" title="Di chuyển xuống" ${isLast ? 'disabled style="opacity:.35;pointer-events:none"' : ''}>
-                  <svg viewBox="0 0 24 24" class="icon"><path d="m6 9 6 6 6-6"/></svg>
+                  <span class="material-symbols-rounded" aria-hidden="true">arrow_downward</span>
                 </button>
                 <button class="icon-btn" type="button" data-action="duplicate" title="Nhân bản mốc">
-                  <svg viewBox="0 0 24 24" class="icon"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
                 </button>
                 <button class="icon-btn" type="button" data-action="edit" title="Chỉnh sửa">
-                  <svg viewBox="0 0 24 24" class="icon"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                 </button>
                 <button class="icon-btn danger" type="button" data-action="delete" title="Xóa mốc">
-                  <svg viewBox="0 0 24 24" class="icon"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m-1 0v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10Z"/></svg>
+                  <span class="material-symbols-rounded" aria-hidden="true">delete</span>
                 </button>
               </div>
             </div>
