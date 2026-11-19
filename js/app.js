@@ -168,7 +168,20 @@
     } catch (err) {
       console.warn('Không thể đọc dữ liệu localStorage:', err);
     }
-    return buildTemplateState('trip', 'lotus');
+    return {
+      theme: 'lotus',
+      date: '2026-11-20',
+      title: 'Tour nửa ngày tại HCM',
+      subtitle: 'Tập trung đúng giờ • Mang theo giấy tờ tùy thân & trang phục thoải mái',
+      events: [
+        { id: 'ev_mwna7u1o_8mfe8', start: '12:00', end: '13:30', title: 'Khởi động đi ăn', category: 'an-uong', location: 'Bình Thạnh', note: '', highlight: false, done: false },
+        { id: 'ev_mwnaal5w_bi0zn', start: '13:30', end: '14:10', title: 'Di chuyển đến Beta', category: 'di-chuyen', location: 'Ung Văn Khiêm', note: '2 xuất 13h50 hoặc 14h10', highlight: false, done: false },
+        { id: 'ev_mwnacqq7_7xixt', start: '14:10', end: '16:30', title: 'Xem phim', category: 'tham-quan', location: 'Beta Ung Văn Khiêm', note: 'Trại giam hạnh phúc - Tại rạp Beta Ung Văn Khiêm', highlight: false, done: false },
+        { id: 'ev_mwnakanl_fil1n', start: '18:00', end: '19:00', title: 'Bắn cung', category: 'tham-quan', location: 'V.N.A Câu lạc bộ cung', note: '', highlight: false, done: false },
+        { id: 'ev_mwnal0zo_yllke', start: '19:00', end: '20:00', title: 'Shopping', category: 'tham-quan', location: '', note: 'Quẹo lựa', highlight: false, done: false },
+        { id: 'ev_mwnal882_va9wx', start: '20:00', end: '21:00', title: 'Ăn tối', category: 'an-uong', location: '', note: '', highlight: false, done: false }
+      ]
+    };
   }
 
   function saveState() {
