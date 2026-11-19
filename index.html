@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="ocean">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline 1 Ngày Tự Tùy Chỉnh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Control Bar (hidden in preview & print) -->
+    <nav class="toolbar no-preview no-print" aria-label="Thanh công cụ">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Chủ đề:</span>
+        <div class="theme-switcher" role="radiogroup" aria-label="Chọn chủ đề màu sắc">
+          <button class="theme-dot active" data-theme="ocean" title="Xanh Đại Dương" aria-label="Xanh Đại Dương"></button>
+          <button class="theme-dot" data-theme="sunset" title="Hoàng Hôn" aria-label="Hoàng Hôn"></button>
+          <button class="theme-dot" data-theme="forest" title="Rừng Xanh" aria-label="Rừng Xanh"></button>
+          <button class="theme-dot" data-theme="purple" title="Tím Mộng Mơ" aria-label="Tím Mộng Mơ"></button>
+          <button class="theme-dot" data-theme="dark" title="Dark Mode" aria-label="Dark Mode"></button>
+        </div>
+      </div>
+
+      <div class="toolbar-group">
+        <div class="dropdown">
+          <button class="btn btn-ghost" id="btnTemplates" type="button">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm0 9a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5Zm10 0a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-5Z"/></svg>
+            Mẫu nhanh
+          </button>
+          <div class="dropdown-menu" id="templateMenu">
+            <button type="button" data-template="trip">
+              <strong>Chuyến đi / Teambuilding</strong>
+              <span>Lịch trình tham quan, ăn uống &amp; gala trọn ngày</span>
+            </button>
+            <button type="button" data-template="workday">
+              <strong>Ngày làm việc hiệu suất</strong>
+              <span>Deep work, họp nhóm &amp; tập luyện khoa học</span>
+            </button>
+            <button type="button" data-template="weekend">
+              <strong>Cuối tuần thư giãn</strong>
+              <span>Cà phê sáng, dạo phố, xem phim &amp; nghỉ ngơi</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost" id="btnSortTime" type="button" title="Sắp xếp tự động theo giờ bắt đầu">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M3 6h14M3 12h10M3 18h6m11-9v10m0 0-3-3m3 3 3-3"/></svg>
+          Sắp xếp giờ
+        </button>
+
+        <button class="btn btn-ghost" id="btnExportJson" type="button" title="Xuất dữ liệu JSON">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Xuất JSON
+        </button>
+
+        <button class="btn btn-ghost" id="btnImportJson" type="button" title="Nhập dữ liệu từ file JSON">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M12 15V3m0 0-4 4m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Nhập JSON
+        </button>
+        <input type="file" id="fileImportJson" accept=".json,application/json" hidden />
+
+        <button class="btn btn-ghost" id="btnPrint" type="button" title="In hoặc Xuất PDF">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6v-7Z"/></svg>
+          In / PDF
+        </button>
+
+        <button class="btn btn-primary" id="btnTogglePreview" type="button">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          Xem trước
+        </button>
+      </div>
+    </nav>
+
+    <!-- Floating exit preview button -->
+    <button class="btn btn-primary exit-preview-btn no-print" id="btnExitPreview" type="button">
+      <svg viewBox="0 0 24 24" class="icon"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      Thoát chế độ xem trước
+    </button>
+
+    <!-- Main Printable / Previewable Card -->
+    <main class="timeline-container" id="timelineSheet">
+      <!-- Editable Hero Header -->
+      <header class="hero-header">
+        <div class="hero-top">
+          <div class="hero-meta">
+            <label class="date-pill" title="Chọn ngày diễn ra">
+              <svg viewBox="0 0 24 24" class="icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <input type="date" id="inputDate" class="date-input no-preview no-print" />
+              <span id="displayDate" class="date-display"></span>
+            </label>
+            <span class="autosave-badge no-preview no-print" id="autosaveStatus">Đã lưu tự động</span>
+          </div>
+
+          <h1 id="inputTitle" class="hero-title" contenteditable="true" spellcheck="false" data-placeholder="Nhập tiêu đề lịch trình..."></h1>
+          <p id="inputSubtitle" class="hero-subtitle" contenteditable="true" spellcheck="false" data-placeholder="Nhập mô tả hoặc địa điểm diễn ra..."></p>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-label">Tổng số mốc</span>
+            <strong class="stat-value" id="statCount">0 mốc</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Khung giờ</span>
+            <strong class="stat-value" id="statRange">--:-- - --:--</strong>
+          </div>
+          <div class="stat-item stat-progress">
+            <div class="progress-header">
+              <span class="stat-label">Tiến độ hoàn thành</span>
+              <strong class="stat-value" id="statProgressText">0%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="statProgressBar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Action strip above timeline -->
+      <section class="timeline-actions no-preview no-print">
+        <div class="category-legend" id="categoryFilterBar" aria-label="Lọc theo danh mục"></div>
+        <button class="btn btn-primary" id="btnAddEvent" type="button">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14M5 12h14"/></svg>
+          Thêm mốc mới
+        </button>
+      </section>
+
+      <!-- Vertical Timeline List -->
+      <section class="timeline-list" id="timelineList" aria-live="polite"></section>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Chưa có mốc thời gian nào</h3>
+        <p>Bắt đầu thêm hoạt động đầu tiên cho ngày của bạn hoặc chọn một mẫu nhanh ở thanh công cụ.</p>
+        <button class="btn btn-primary no-preview no-print" id="btnEmptyAdd" type="button">Thêm mốc đầu tiên</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Add / Edit Event -->
+  <div class="modal-backdrop" id="eventModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalTitle">Thêm mốc thời gian</h2>
+        <button class="icon-btn" id="btnCloseModal" type="button" aria-label="Đóng">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="eventForm" class="modal-form">
+        <input type="hidden" id="fieldId" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fieldStart">Giờ bắt đầu *</label>
+            <input type="time" id="fieldStart" required />
+          </div>
+          <div class="form-group">
+            <label for="fieldEnd">Giờ kết thúc *</label>
+            <input type="time" id="fieldEnd" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fieldTitle">Tên hoạt động *</label>
+          <input type="text" id="fieldTitle" placeholder="VD: Tập trung &amp; xuất phát" required maxlength="120" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fieldCategory">Danh mục</label>
+            <select id="fieldCategory"></select>
+          </div>
+          <div class="form-group">
+            <label for="fieldLocation">Địa điểm</label>
+            <input type="text" id="fieldLocation" placeholder="VD: Sảnh chính / Nhà hàng..." maxlength="120" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fieldNote">Ghi chú / Chi tiết</label>
+          <textarea id="fieldNote" rows="3" placeholder="Thêm mô tả, người phụ trách hoặc lưu ý quan trọng..."></textarea>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="fieldHighlight" />
+          <span>Đánh dấu mốc quan trọng (nổi bật)</span>
+        </label>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" type="button" id="btnCancelModal">Hủy</button>
+          <button class="btn btn-primary" type="submit">Lưu mốc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
