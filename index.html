@@ -1,127 +1,177 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="ocean">
+<html lang="vi" data-theme="lotus">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timeline 1 Ngày Tự Tùy Chỉnh</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ec4899" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Timeline 1 Ngày — Lịch trình xinh xắn</title>
+  <meta name="description" content="Lập timeline 1 ngày đẹp, nhẹ, lưu tự động — theme hồng cánh sen." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- Nền trang trí -->
+  <div class="bg-decor" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+    <span class="petal p1">✿</span>
+    <span class="petal p2">❀</span>
+    <span class="petal p3">✿</span>
+  </div>
+
   <div class="app-shell">
-    <!-- Top Control Bar (hidden in preview & print) -->
-    <nav class="toolbar no-preview no-print" aria-label="Thanh công cụ">
-      <div class="toolbar-group">
-        <span class="toolbar-label">Chủ đề:</span>
-        <div class="theme-switcher" role="radiogroup" aria-label="Chọn chủ đề màu sắc">
-          <button class="theme-dot active" data-theme="ocean" title="Xanh Đại Dương" aria-label="Xanh Đại Dương"></button>
-          <button class="theme-dot" data-theme="sunset" title="Hoàng Hôn" aria-label="Hoàng Hôn"></button>
-          <button class="theme-dot" data-theme="forest" title="Rừng Xanh" aria-label="Rừng Xanh"></button>
-          <button class="theme-dot" data-theme="purple" title="Tím Mộng Mơ" aria-label="Tím Mộng Mơ"></button>
-          <button class="theme-dot" data-theme="dark" title="Dark Mode" aria-label="Dark Mode"></button>
+    <!-- Brand + Toolbar -->
+    <div class="topbar no-preview no-print">
+      <div class="brand">
+        <span class="brand-logo">🪷</span>
+        <div class="brand-text">
+          <strong>Timeline 1 Ngày</strong>
+          <span>Lịch trình xinh · lưu tự động</span>
         </div>
       </div>
-
-      <div class="toolbar-group">
-        <div class="dropdown">
-          <button class="btn btn-ghost" id="btnTemplates" type="button">
-            <svg viewBox="0 0 24 24" class="icon"><path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm0 9a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5Zm10 0a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-5Z"/></svg>
-            Mẫu nhanh
-          </button>
-          <div class="dropdown-menu" id="templateMenu">
-            <button type="button" data-template="trip">
-              <strong>Chuyến đi / Teambuilding</strong>
-              <span>Lịch trình tham quan, ăn uống &amp; gala trọn ngày</span>
-            </button>
-            <button type="button" data-template="workday">
-              <strong>Ngày làm việc hiệu suất</strong>
-              <span>Deep work, họp nhóm &amp; tập luyện khoa học</span>
-            </button>
-            <button type="button" data-template="weekend">
-              <strong>Cuối tuần thư giãn</strong>
-              <span>Cà phê sáng, dạo phố, xem phim &amp; nghỉ ngơi</span>
-            </button>
+      <nav class="toolbar" aria-label="Thanh công cụ">
+        <div class="toolbar-group">
+          <div class="theme-switcher" role="radiogroup" aria-label="Chọn chủ đề màu sắc">
+            <button class="theme-dot active" data-theme="lotus" title="Hồng Cánh Sen" aria-label="Hồng Cánh Sen"></button>
+            <button class="theme-dot" data-theme="ocean" title="Xanh Đại Dương" aria-label="Xanh Đại Dương"></button>
+            <button class="theme-dot" data-theme="sunset" title="Hoàng Hôn" aria-label="Hoàng Hôn"></button>
+            <button class="theme-dot" data-theme="forest" title="Rừng Xanh" aria-label="Rừng Xanh"></button>
+            <button class="theme-dot" data-theme="purple" title="Tím Mộng Mơ" aria-label="Tím Mộng Mơ"></button>
+            <button class="theme-dot" data-theme="dark" title="Dark Mode" aria-label="Dark Mode"></button>
           </div>
         </div>
 
-        <button class="btn btn-ghost" id="btnSortTime" type="button" title="Sắp xếp tự động theo giờ bắt đầu">
-          <svg viewBox="0 0 24 24" class="icon"><path d="M3 6h14M3 12h10M3 18h6m11-9v10m0 0-3-3m3 3 3-3"/></svg>
-          Sắp xếp giờ
-        </button>
+        <div class="toolbar-group toolbar-actions">
+          <div class="dropdown">
+            <button class="btn btn-ghost btn-sm" id="btnTemplates" type="button">
+              <svg viewBox="0 0 24 24" class="icon"><path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm0 9a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5Zm10 0a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-5Z"/></svg>
+              Mẫu nhanh
+            </button>
+            <div class="dropdown-menu" id="templateMenu">
+              <button type="button" data-template="trip">
+                <strong>🏖️ Chuyến đi / Teambuilding</strong>
+                <span>Lịch trình tham quan, ăn uống &amp; gala trọn ngày</span>
+              </button>
+              <button type="button" data-template="workday">
+                <strong>⚡ Ngày làm việc hiệu suất</strong>
+                <span>Deep work, họp nhóm &amp; tập luyện khoa học</span>
+              </button>
+              <button type="button" data-template="weekend">
+                <strong>☕ Cuối tuần thư giãn</strong>
+                <span>Cà phê sáng, dạo phố, xem phim &amp; nghỉ ngơi</span>
+              </button>
+            </div>
+          </div>
 
-        <button class="btn btn-ghost" id="btnExportJson" type="button" title="Xuất dữ liệu JSON">
-          <svg viewBox="0 0 24 24" class="icon"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-          Xuất JSON
-        </button>
+          <button class="btn btn-ghost btn-sm icon-only-mobile" id="btnSortTime" type="button" title="Sắp xếp tự động theo giờ bắt đầu">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M3 6h14M3 12h10M3 18h6m11-9v10m0 0-3-3m3 3 3-3"/></svg>
+            <span class="btn-text">Sắp xếp</span>
+          </button>
 
-        <button class="btn btn-ghost" id="btnImportJson" type="button" title="Nhập dữ liệu từ file JSON">
-          <svg viewBox="0 0 24 24" class="icon"><path d="M12 15V3m0 0-4 4m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-          Nhập JSON
-        </button>
-        <input type="file" id="fileImportJson" accept=".json,application/json" hidden />
+          <div class="toolbar-divider"></div>
 
-        <button class="btn btn-ghost" id="btnPrint" type="button" title="In hoặc Xuất PDF">
-          <svg viewBox="0 0 24 24" class="icon"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6v-7Z"/></svg>
-          In / PDF
-        </button>
+          <button class="btn btn-ghost btn-sm icon-only-mobile" id="btnExportJson" type="button" title="Xuất dữ liệu JSON">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            <span class="btn-text">Xuất</span>
+          </button>
 
-        <button class="btn btn-primary" id="btnTogglePreview" type="button">
-          <svg viewBox="0 0 24 24" class="icon"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          Xem trước
-        </button>
-      </div>
-    </nav>
+          <button class="btn btn-ghost btn-sm icon-only-mobile" id="btnImportJson" type="button" title="Nhập dữ liệu từ file JSON">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M12 15V3m0 0-4 4m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            <span class="btn-text">Nhập</span>
+          </button>
+          <input type="file" id="fileImportJson" accept=".json,application/json" hidden />
+
+          <button class="btn btn-ghost btn-sm icon-only-mobile" id="btnPrint" type="button" title="In hoặc Xuất PDF">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6v-7Z"/></svg>
+            <span class="btn-text">In / PDF</span>
+          </button>
+
+          <button class="btn btn-primary btn-sm" id="btnTogglePreview" type="button">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span class="btn-text">Xem trước</span>
+          </button>
+        </div>
+      </nav>
+    </div>
 
     <!-- Floating exit preview button -->
     <button class="btn btn-primary exit-preview-btn no-print" id="btnExitPreview" type="button">
       <svg viewBox="0 0 24 24" class="icon"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      Thoát chế độ xem trước
+      Thoát xem trước
     </button>
 
-    <!-- Main Printable / Previewable Card -->
+    <!-- Floating Add button — chỉ hiện trên mobile -->
+    <button class="fab-add no-preview no-print" id="btnFabAdd" type="button" aria-label="Thêm mốc mới">
+      <svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+
+    <!-- Main Card -->
     <main class="timeline-container" id="timelineSheet">
-      <!-- Editable Hero Header -->
       <header class="hero-header">
-        <div class="hero-top">
+        <div class="hero-inner">
           <div class="hero-meta">
             <label class="date-pill" title="Chọn ngày diễn ra">
               <svg viewBox="0 0 24 24" class="icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
               <input type="date" id="inputDate" class="date-input no-preview no-print" />
               <span id="displayDate" class="date-display"></span>
             </label>
-            <span class="autosave-badge no-preview no-print" id="autosaveStatus">Đã lưu tự động</span>
+            <span class="autosave-badge no-preview no-print" id="autosaveStatus">
+              <span class="dot-live"></span> Đã lưu tự động
+            </span>
           </div>
 
-          <h1 id="inputTitle" class="hero-title" contenteditable="true" spellcheck="false" data-placeholder="Nhập tiêu đề lịch trình..."></h1>
-          <p id="inputSubtitle" class="hero-subtitle" contenteditable="true" spellcheck="false" data-placeholder="Nhập mô tả hoặc địa điểm diễn ra..."></p>
+          <h1 id="inputTitle" class="hero-title" contenteditable="true" spellcheck="false" data-placeholder="Đặt tên cho ngày tuyệt vời này…"></h1>
+          <p id="inputSubtitle" class="hero-subtitle" contenteditable="true" spellcheck="false" data-placeholder="Thêm mô tả, mood của ngày hoặc địa điểm chính…"></p>
+
+          <div class="stats-bar">
+            <div class="stat-item">
+              <span class="stat-icon">📌</span>
+              <div>
+                <span class="stat-label">Tổng số mốc</span>
+                <strong class="stat-value" id="statCount">0 mốc</strong>
+              </div>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon">⏰</span>
+              <div>
+                <span class="stat-label">Khung giờ</span>
+                <strong class="stat-value" id="statRange">--:-- – --:--</strong>
+              </div>
+            </div>
+            <div class="stat-item stat-progress">
+              <span class="stat-icon">🌸</span>
+              <div class="progress-wrap">
+                <div class="progress-header">
+                  <span class="stat-label">Tiến độ</span>
+                  <strong class="stat-value" id="statProgressText">0%</strong>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="statProgressBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- Stats Strip -->
-        <div class="stats-bar">
-          <div class="stat-item">
-            <span class="stat-label">Tổng số mốc</span>
-            <strong class="stat-value" id="statCount">0 mốc</strong>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Khung giờ</span>
-            <strong class="stat-value" id="statRange">--:-- - --:--</strong>
-          </div>
-          <div class="stat-item stat-progress">
-            <div class="progress-header">
-              <span class="stat-label">Tiến độ hoàn thành</span>
-              <strong class="stat-value" id="statProgressText">0%</strong>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="statProgressBar" style="width: 0%"></div>
-            </div>
-          </div>
+        <div class="hero-wave" aria-hidden="true">
+          <svg viewBox="0 0 1440 70" preserveAspectRatio="none"><path d="M0,40 C240,80 480,0 720,30 C960,60 1200,10 1440,40 L1440,70 L0,70 Z"/></svg>
         </div>
       </header>
 
-      <!-- Action strip above timeline -->
+      <!-- Action strip -->
       <section class="timeline-actions no-preview no-print">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" class="icon"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="text" id="inputSearch" placeholder="Tìm hoạt động, địa điểm…" autocomplete="off" />
+          <button class="icon-btn search-clear" id="btnClearSearch" type="button" aria-label="Xóa tìm kiếm" hidden>
+            <svg viewBox="0 0 24 24" class="icon"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
         <div class="category-legend" id="categoryFilterBar" aria-label="Lọc theo danh mục"></div>
         <button class="btn btn-primary" id="btnAddEvent" type="button">
           <svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14M5 12h14"/></svg>
@@ -129,26 +179,32 @@
         </button>
       </section>
 
-      <!-- Vertical Timeline List -->
       <section class="timeline-list" id="timelineList" aria-live="polite"></section>
 
-      <!-- Empty State -->
       <div class="empty-state" id="emptyState" hidden>
-        <div class="empty-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div class="empty-art">
+          <span class="empty-lotus">🪷</span>
+          <span class="empty-ring"></span>
         </div>
-        <h3>Chưa có mốc thời gian nào</h3>
-        <p>Bắt đầu thêm hoạt động đầu tiên cho ngày của bạn hoặc chọn một mẫu nhanh ở thanh công cụ.</p>
-        <button class="btn btn-primary no-preview no-print" id="btnEmptyAdd" type="button">Thêm mốc đầu tiên</button>
+        <h3>Ngày mới tinh, chưa có mốc nào</h3>
+        <p>Thêm hoạt động đầu tiên hoặc chọn một mẫu nhanh bên trên để bắt đầu nhé.</p>
+        <button class="btn btn-primary no-preview no-print" id="btnEmptyAdd" type="button">＋ Thêm mốc đầu tiên</button>
       </div>
+
+      <footer class="sheet-footer">
+        <span>Made with 💗 · Bấm vào địa điểm để mở Google Maps</span>
+      </footer>
     </main>
   </div>
 
-  <!-- Modal Add / Edit Event -->
+  <!-- Modal -->
   <div class="modal-backdrop" id="eventModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h2 id="modalTitle">Thêm mốc thời gian</h2>
+        <div>
+          <p class="modal-kicker">Mốc thời gian</p>
+          <h2 id="modalTitle">Thêm mốc mới</h2>
+        </div>
         <button class="icon-btn" id="btnCloseModal" type="button" aria-label="Đóng">
           <svg viewBox="0 0 24 24" class="icon"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
@@ -170,7 +226,7 @@
 
         <div class="form-group">
           <label for="fieldTitle">Tên hoạt động *</label>
-          <input type="text" id="fieldTitle" placeholder="VD: Tập trung &amp; xuất phát" required maxlength="120" />
+          <input type="text" id="fieldTitle" placeholder="VD: Cà phê sáng cùng bạn thân" required maxlength="120" />
         </div>
 
         <div class="form-row">
@@ -179,32 +235,34 @@
             <select id="fieldCategory"></select>
           </div>
           <div class="form-group">
-            <label for="fieldLocation">Địa điểm</label>
-            <input type="text" id="fieldLocation" placeholder="VD: Sảnh chính / Nhà hàng..." maxlength="120" />
+            <label for="fieldLocation">Địa điểm <span class="hint-inline">📍 bấm để mở Maps</span></label>
+            <input type="text" id="fieldLocation" placeholder="VD: Hồ Gươm, Hà Nội" maxlength="120" />
           </div>
         </div>
 
         <div class="form-group">
           <label for="fieldNote">Ghi chú / Chi tiết</label>
-          <textarea id="fieldNote" rows="3" placeholder="Thêm mô tả, người phụ trách hoặc lưu ý quan trọng..."></textarea>
+          <textarea id="fieldNote" rows="3" placeholder="Người phụ trách, đồ cần mang, lưu ý…"></textarea>
         </div>
 
         <label class="checkbox-row">
           <input type="checkbox" id="fieldHighlight" />
-          <span>Đánh dấu mốc quan trọng (nổi bật)</span>
+          <span class="checkbox-card">
+            <strong>⭐ Đánh dấu nổi bật</strong>
+            <small>Mốc quan trọng sẽ được viền vàng, ưu tiên hiển thị</small>
+          </span>
         </label>
 
         <div class="modal-footer">
           <button class="btn btn-ghost" type="button" id="btnCancelModal">Hủy</button>
-          <button class="btn btn-primary" type="submit">Lưu mốc</button>
+          <button class="btn btn-primary" type="submit">💾 Lưu mốc</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Toast notification -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

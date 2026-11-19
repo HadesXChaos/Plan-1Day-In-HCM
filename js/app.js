@@ -126,7 +126,7 @@
   function buildTemplateState(key, keepTheme) {
     const tpl = TEMPLATES[key] || TEMPLATES.trip;
     return {
-      theme: keepTheme || 'ocean',
+      theme: keepTheme || 'lotus',
       date: todayISO(),
       title: tpl.title,
       subtitle: tpl.subtitle,
@@ -137,6 +137,8 @@
   // Application State
   let state = loadState();
   let activeCategoryFilter = 'all';
+  let searchQuery = '';
+  let lastProgressPct = -1;
 
   function loadState() {
     try {
@@ -145,7 +147,7 @@
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.events)) {
           return {
-            theme: parsed.theme || 'ocean',
+            theme: parsed.theme || 'lotus',
             date: parsed.date || todayISO(),
             title: parsed.title || 'Lịch Trình 1 Ngày',
             subtitle: parsed.subtitle || '',
@@ -166,7 +168,7 @@
     } catch (err) {
       console.warn('Không thể đọc dữ liệu localStorage:', err);
     }
-    return buildTemplateState('trip', 'ocean');
+    return buildTemplateState('trip', 'lotus');
   }
 
   function saveState() {
@@ -196,7 +198,11 @@
   const elStatProgressBar = document.getElementById('statProgressBar');
   const elTimelineList = document.getElementById('timelineList');
   const elEmptyState = document.getElementById('emptyState');
+  const elEmptyTitle = elEmptyState.querySelector('h3');
+  const elEmptyDesc = elEmptyState.querySelector('p');
   const elCategoryFilterBar = document.getElementById('categoryFilterBar');
+  const elSearchInput = document.getElementById('inputSearch');
+  const elSearchClear = document.getElementById('btnClearSearch');
   const elModal = document.getElementById('eventModal');
   const elModalTitle = document.getElementById('modalTitle');
   const elForm = document.getElementById('eventForm');
@@ -211,11 +217,17 @@
   const elToast = document.getElementById('toast');
 
   let toastTimer = null;
+  let searchDebounce = null;
   function showToast(msg) {
     elToast.textContent = msg;
     elToast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => elToast.classList.remove('show'), 2400);
+  }
+  function vibrate(pattern) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    } catch (_) { /* bỏ qua */ }
   }
 
   function escapeHTML(str) {
@@ -225,6 +237,35 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  // Google Maps: bấm vào địa chỉ -> nhảy sang Google Maps tìm địa điểm đó
+  function mapsUrl(location) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.trim())}`;
+  }
+
+  // Hiệu ứng ăn mừng 100% — confetti thuần CSS/DOM, không cần thư viện ngoài
+  function celebrateCompletion() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layer = document.createElement('div');
+    layer.className = 'confetti-layer';
+    layer.setAttribute('aria-hidden', 'true');
+    const colors = ['#ec4899', '#f9a8d4', '#f59e0b', '#ffffff', '#be185d'];
+    const pieces = window.innerWidth < 560 ? 70 : 120;
+    for (let i = 0; i < pieces; i++) {
+      const s = document.createElement('span');
+      const size = 6 + Math.random() * 7;
+      s.style.left = `${Math.random() * 100}vw`;
+      s.style.width = `${size}px`;
+      s.style.height = `${size * (0.5 + Math.random())}px`;
+      s.style.background = colors[i % colors.length];
+      s.style.animationDelay = `${Math.random() * 0.35}s`;
+      s.style.animationDuration = `${2.1 + Math.random() * 1.4}s`;
+      s.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
+      layer.appendChild(s);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 3800);
   }
 
   function applyTheme(theme) {
@@ -248,11 +289,11 @@
       counts[ev.category] = (counts[ev.category] || 0) + 1;
     });
 
-    let html = `<button type="button" class="filter-chip ${activeCategoryFilter === 'all' ? 'active' : ''}" data-cat="all">Tất cả (${counts.all})</button>`;
+    let html = `<button type="button" class="filter-chip ${activeCategoryFilter === 'all' ? 'active' : ''}" data-cat="all"><span class="chip-dot" style="background: var(--accent)"></span>Tất cả (${counts.all})</button>`;
     Object.entries(CATEGORIES).forEach(([key, cfg]) => {
       const c = counts[key] || 0;
       if (c > 0 || activeCategoryFilter === key) {
-        html += `<button type="button" class="filter-chip ${activeCategoryFilter === key ? 'active' : ''}" data-cat="${key}">${cfg.label} (${c})</button>`;
+        html += `<button type="button" class="filter-chip ${activeCategoryFilter === key ? 'active' : ''}" data-cat="${key}"><span class="chip-dot" style="background: ${cfg.color}"></span>${cfg.label} (${c})</button>`;
       }
     });
     elCategoryFilterBar.innerHTML = html;
@@ -266,6 +307,13 @@
     elStatCount.textContent = `${total} mốc (${done} xong)`;
     elStatProgressText.textContent = `${pct}%`;
     elStatProgressBar.style.width = `${pct}%`;
+
+    // Ăn mừng khi vừa chạm 100% (thư viện canvas-confetti)
+    if (lastProgressPct !== -1 && lastProgressPct < 100 && pct === 100 && total > 0) {
+      celebrateCompletion();
+      showToast('Tuyệt vời! Bạn đã hoàn thành toàn bộ lịch trình 🎉');
+    }
+    lastProgressPct = pct;
 
     if (total === 0) {
       elStatRange.textContent = '--:-- - --:--';
@@ -290,19 +338,37 @@
     renderStats();
     renderCategoryFilters();
 
-    const filtered = activeCategoryFilter === 'all'
-      ? state.events
+    const q = searchQuery.trim().toLowerCase();
+    let filtered = activeCategoryFilter === 'all'
+      ? [...state.events]
       : state.events.filter(e => e.category === activeCategoryFilter);
+    if (q) {
+      filtered = filtered.filter(e =>
+        (e.title || '').toLowerCase().includes(q) ||
+        (e.location || '').toLowerCase().includes(q) ||
+        (e.note || '').toLowerCase().includes(q)
+      );
+    }
 
     if (filtered.length === 0) {
       elTimelineList.innerHTML = '';
       elEmptyState.hidden = false;
+      if (q) {
+        elEmptyTitle.textContent = `Không tìm thấy “${searchQuery.trim()}”`;
+        elEmptyDesc.textContent = 'Thử từ khóa khác hoặc xóa bộ lọc danh mục nhé.';
+      } else if (state.events.length === 0) {
+        elEmptyTitle.textContent = 'Ngày mới tinh, chưa có mốc nào';
+        elEmptyDesc.textContent = 'Thêm hoạt động đầu tiên hoặc chọn một mẫu nhanh bên trên để bắt đầu nhé.';
+      } else {
+        elEmptyTitle.textContent = 'Danh mục này chưa có mốc nào';
+        elEmptyDesc.textContent = 'Thêm mốc mới hoặc chọn bộ lọc khác nhé.';
+      }
       return;
     }
 
     elEmptyState.hidden = true;
 
-    elTimelineList.innerHTML = filtered.map((ev) => {
+    elTimelineList.innerHTML = filtered.map((ev, i) => {
       const realIndex = state.events.findIndex(item => item.id === ev.id);
       const cat = CATEGORIES[ev.category] || CATEGORIES.khac;
       const duration = formatDuration(ev.start, ev.end);
@@ -310,36 +376,44 @@
       const isLast = realIndex === state.events.length - 1;
 
       return `
-        <article class="timeline-item ${ev.highlight ? 'is-highlight' : ''} ${ev.done ? 'is-done' : ''}" data-id="${ev.id}">
-          <div class="time-col">
-            <div class="time-range">${escapeHTML(ev.start)}</div>
-            <span class="time-end">đến ${escapeHTML(ev.end)}</span>
-            <span class="duration-badge">${duration}</span>
-          </div>
-
-          <div class="axis-col">
-            <div class="axis-node" style="background: ${cat.color}" title="${cat.label}">
+        <article class="timeline-item ${ev.highlight ? 'is-highlight' : ''} ${ev.done ? 'is-done' : ''} reveal" style="transition-delay: ${Math.min(i * 55, 330)}ms" data-id="${ev.id}">
+          <div class="tl-rail">
+            <div class="tl-dot" style="background: linear-gradient(135deg, ${cat.color}, ${cat.color}B3)" title="${escapeHTML(cat.label)}">
               <svg viewBox="0 0 24 24">${cat.svg}</svg>
+              <span class="tl-num">${String(i + 1).padStart(2, '0')}</span>
+              ${ev.done ? '<span class="tl-done">✓</span>' : ''}
             </div>
           </div>
 
-          <div class="event-card">
-            <div class="card-header">
-              <div class="card-title-wrap">
-                <input type="checkbox" class="done-checkbox no-print" data-action="toggle-done" ${ev.done ? 'checked' : ''} aria-label="Đánh dấu hoàn thành" />
-                <div>
-                  <h3 class="event-title">${escapeHTML(ev.title)}</h3>
-                  <div class="card-badges">
-                    <span class="cat-badge" style="background: ${cat.color}">${cat.label}</span>
-                    ${ev.highlight ? '<span class="highlight-badge">★ Nổi bật</span>' : ''}
-                    ${ev.location ? `
-                      <span class="location-tag">
-                        <svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg>
-                        ${escapeHTML(ev.location)}
-                      </span>
-                    ` : ''}
-                  </div>
+          <div class="tl-card">
+            <div class="tl-top">
+              <span class="tl-time">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                ${escapeHTML(ev.start)} <span class="tl-arrow">→</span> ${escapeHTML(ev.end)}
+              </span>
+              <span class="duration-badge">⏱ ${duration}</span>
+            </div>
+
+            <div class="tl-main">
+              <label class="tl-check no-print" title="Đánh dấu hoàn thành">
+                <input type="checkbox" data-action="toggle-done" ${ev.done ? 'checked' : ''} aria-label="Đánh dấu hoàn thành" />
+                <span class="tl-box"><svg viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></svg></span>
+              </label>
+
+              <div class="tl-content">
+                <h3 class="tl-title">${escapeHTML(ev.title)}</h3>
+                <div class="card-badges">
+                  <span class="cat-badge" style="background: ${cat.color}">${cat.label}</span>
+                  ${ev.highlight ? '<span class="highlight-badge">★ Nổi bật</span>' : ''}
+                  ${ev.location ? `
+                    <a class="location-tag location-link" href="${mapsUrl(ev.location)}" target="_blank" rel="noopener" title="Mở Google Maps: ${escapeHTML(ev.location)}">
+                      <svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg>
+                      <span>${escapeHTML(ev.location)}</span>
+                      <svg viewBox="0 0 24 24" class="external-icon"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                    </a>
+                  ` : ''}
                 </div>
+                ${ev.note ? `<p class="event-note">${escapeHTML(ev.note)}</p>` : ''}
               </div>
 
               <div class="card-actions no-preview no-print">
@@ -360,12 +434,44 @@
                 </button>
               </div>
             </div>
-
-            ${ev.note ? `<p class="event-note">${escapeHTML(ev.note)}</p>` : ''}
           </div>
         </article>
       `;
     }).join('');
+
+    // Cập nhật % tiến độ lên đường ray timeline
+    const totalAll = state.events.length;
+    const doneAll = state.events.filter(e => e.done).length;
+    const railPct = totalAll === 0 ? 0 : Math.round((doneAll / totalAll) * 100);
+    elTimelineList.style.setProperty('--done-pct', railPct);
+
+    requestAnimationFrame(() => observeReveals());
+  }
+
+  // Reveal on scroll — animation nhẹ, mượt trên mobile
+  let revealObserver = null;
+  function observeReveals() {
+    const items = elTimelineList.querySelectorAll('.reveal:not(.is-visible)');
+    if (!items.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      items.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    if (!('IntersectionObserver' in window)) {
+      items.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
+    }
+    items.forEach(el => revealObserver.observe(el));
   }
 
   // Modal helpers
@@ -449,6 +555,9 @@
         const key = btn.dataset.template;
         state = buildTemplateState(key, state.theme);
         activeCategoryFilter = 'all';
+        searchQuery = '';
+        elSearchInput.value = '';
+        elSearchClear.hidden = true;
         saveState();
         renderTimeline();
         showToast('Đã áp dụng mẫu lịch trình mới');
@@ -506,6 +615,9 @@
             }))
           };
           activeCategoryFilter = 'all';
+          searchQuery = '';
+          elSearchInput.value = '';
+          elSearchClear.hidden = true;
           applyTheme(state.theme);
           renderTimeline();
           showToast('Đã nhập dữ liệu timeline thành công');
@@ -547,6 +659,7 @@
     // Add event buttons
     document.getElementById('btnAddEvent').addEventListener('click', () => openModal(null));
     document.getElementById('btnEmptyAdd').addEventListener('click', () => openModal(null));
+    document.getElementById('btnFabAdd').addEventListener('click', () => openModal(null));
 
     // Modal controls
     document.getElementById('btnCloseModal').addEventListener('click', closeModal);
@@ -594,6 +707,23 @@
       renderTimeline();
     });
 
+    // Search events (debounce để mượt trên mobile)
+    elSearchInput.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        searchQuery = elSearchInput.value || '';
+        elSearchClear.hidden = searchQuery.trim() === '';
+        renderTimeline();
+      }, 180);
+    });
+    elSearchClear.addEventListener('click', () => {
+      elSearchInput.value = '';
+      searchQuery = '';
+      elSearchClear.hidden = true;
+      renderTimeline();
+      elSearchInput.focus();
+    });
+
     // Timeline item delegated actions
     elTimelineList.addEventListener('click', (e) => {
       const actionEl = e.target.closest('[data-action]');
@@ -608,6 +738,7 @@
 
       if (action === 'toggle-done') {
         state.events[idx].done = actionEl.checked;
+        vibrate(actionEl.checked ? 15 : 8);
         saveState();
         renderTimeline();
       } else if (action === 'edit') {
